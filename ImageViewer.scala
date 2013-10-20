@@ -1,5 +1,3 @@
-package swing
-
 import javax.swing.ImageIcon
 import java.net.URL
 import scala.swing.event.ButtonClicked
@@ -22,18 +20,13 @@ trait FileHandling {
   }
 }
 
-object test extends SimpleSwingApplication with FileHandling {
+object ImageViewer extends SimpleSwingApplication with FileHandling {
   val baseUrl = """http://www.nhm.ac.uk/resources/visit-us/whats-on/wpy/dev/2013/popup/"""
   var counter = 1
-  val save = new Button {
-    text = "save"
-  }
-  val next = new Button {
-    text = "next"
-  }
-  val previous = new Button {
-    text = "previous"
-  }
+  val save = new Button { text = "save" }
+  val next = new Button { text = "next" }
+  val previous = new Button { text = "previous" }
+  
   def getImg = {
     val newImgIcon = new ImageIcon(new URL(baseUrl + counter + ".jpg"))
     val imgHeight = newImgIcon.getIconHeight
@@ -49,9 +42,9 @@ object test extends SimpleSwingApplication with FileHandling {
     }
     else newImgIcon
   }
-  val img = new Label {
-    icon = getImg
-  }
+  
+  val img = new Label { icon = getImg }
+  
   listenTo(next, previous, save)
   reactions += {
     case ButtonClicked(`next`) =>
@@ -67,6 +60,7 @@ object test extends SimpleSwingApplication with FileHandling {
       val url = new URL(baseUrl + counter + ".jpg")
       downloadImg(url, fileName)
   }
+  
   val ui = new BoxPanel(Orientation.Vertical) {
     contents += new FlowPanel(save, previous, next)
     contents += img
