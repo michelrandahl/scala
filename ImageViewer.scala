@@ -21,12 +21,14 @@ trait FileHandling {
 }
 
 object ImageViewer extends SimpleSwingApplication with FileHandling {
+  val MAXIMGNUMBER = 100 //no more images beyond 100
   val baseUrl = """http://www.nhm.ac.uk/resources/visit-us/whats-on/wpy/dev/2013/popup/"""
   var counter = 1
+  val random = new Button { text = "random" }
   val save = new Button { text = "save" }
   val next = new Button { text = "next" }
   val previous = new Button { text = "previous" }
-  
+
   def getImg = {
     val newImgIcon = new ImageIcon(new URL(baseUrl + counter + ".jpg"))
     val imgHeight = newImgIcon.getIconHeight
@@ -42,17 +44,23 @@ object ImageViewer extends SimpleSwingApplication with FileHandling {
     }
     else newImgIcon
   }
-  
+
   val img = new Label { icon = getImg }
-  
-  listenTo(next, previous, save)
+
+  listenTo(next, previous, save, random)
   reactions += {
+    case ButtonClicked(`random`) =>
+      counter = util.Random.nextInt(MAXIMGNUMBER) + 1
+      println(counter)
+      img.icon = getImg
     case ButtonClicked(`next`) =>
       counter += 1
+      println(counter)
       img.icon = getImg
     case ButtonClicked(`previous`) =>
       if(counter > 1) {
         counter -= 1
+        println(counter)
         img.icon = getImg
       }
     case ButtonClicked(`save`) =>
@@ -60,9 +68,9 @@ object ImageViewer extends SimpleSwingApplication with FileHandling {
       val url = new URL(baseUrl + counter + ".jpg")
       downloadImg(url, fileName)
   }
-  
+
   val ui = new BoxPanel(Orientation.Vertical) {
-    contents += new FlowPanel(save, previous, next)
+    contents += new FlowPanel(save, previous, next, random)
     contents += img
   }
 
